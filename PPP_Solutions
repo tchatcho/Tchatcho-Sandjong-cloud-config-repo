@@ -1,0 +1,424 @@
+Code Implementation Order
+
+isEmpty
+
+Test 1 - isEmpty() returns true if Stack is empty
+
+Test
+@Test
+public void isEmpty_ReturnsTrue_IfStackIsEmpty() {
+  assertTrue(stack.isEmpty());
+}
+
+TDD Red
+public boolean isEmpty() {
+  return false;
+}
+
+TDD Green
+public boolean isEmpty() {
+  return true;
+}
+
+
+push
+
+Test 2 - isEmpty() returns false after calling push(value)
+
+Test
+@Test
+public void isEmpty_ReturnsFalse_IfPushIsCalled() {
+  stack.push(1);
+  assertFalse(stack.isEmpty());
+}
+
+TDD Red
+public void push(Object data) {
+}
+
+TDD Green
+Object data;
+
+public boolean isEmpty() {
+  return data == null;
+}
+
+public void push(Object data) {
+  this.data = data;
+}
+
+
+peek
+
+Test 3 - peek() returns null if Stack is empty
+
+Test
+@Test
+public void peek_ReturnsNull_IfStackIsEmpty() {
+  assertNull(stack.peek());
+}
+
+TDD Red
+public Object peek() {
+  return new Object();
+}
+
+TDD Green
+public Object peek() {
+  return null;
+}
+
+
+Test 4 - peek() returns most recent pushed value
+
+Test
+@Test
+public void peek_ReturnsPushedValue_IfPushIsCalled() {
+  stack.push(2);
+  assertEquals(2, stack.peek());
+}
+
+TDD Red
+public Object peek() {
+  return null;
+}
+
+TDD Green
+public Object peek() {
+  return data;
+}
+
+
+pop
+
+Test 5 - pop() throws EmptyStackException if Stack is empty
+
+Test
+@Test(expected = EmptyStackException.class)
+public void pop_ThrowsEmptyStackException_IfStackIsEmpty() {
+  stack.pop();
+}
+
+TDD Red
+public void pop() {
+
+}
+
+TDD Green
+public void pop() {
+  throw new EmptyStackException();
+}
+
+
+Test 6 - pop() returns most recent pushed value
+
+Test
+@Test
+public void pop_ReturnsPushValue_IfStackIsNotEmpty() {
+  stack.push(3);
+  assertEquals(3, stack.pop());
+}
+
+TDD Red
+public Object pop() {
+  throw new EmptyStackException();
+}
+
+TDD Green
+public Object pop() {
+  if(isEmpty()) {
+    throw new EmptyStackException();
+  }
+  return data;
+}
+
+
+Test 7 - peek() returns null after pop() is called
+
+Test
+@Test
+public void peek_ReturnsNull_IfPopIsCalled() {
+  stack.push(4);
+  stack.pop();
+  assertNull(stack.peek());
+}
+
+TDD Red
+public Object pop() {
+  if(isEmpty()){
+    throw new EmptyStackException();
+  }
+  return data;
+}
+
+TDD Green
+public Object pop() {
+  if(isEmpty()){
+    throw new EmptyStackException();
+  }
+  Object temp = data;
+  data = null;
+  return temp;
+}
+
+
+Test 8 - isEmpty() returns true after pop() is called
+
+Test
+@Test
+public void isEmpty_ReturnsTrue_IfPopIsCalled(){
+  stack.push(5);
+  stack.pop();
+  assertTrue(stack.isEmpty());
+}
+
+TDD Green (Sanity Check)
+public Object pop() {
+  if(isEmpty()){
+    throw new EmptyStackException();
+  }
+  Object temp = data;
+  data = null;
+  return temp;
+}
+
+TDD "Red" (Just to verify we are testing something)
+public Object pop() {
+  if(isEmpty()){
+    throw new EmptyStackException();
+  }
+  Object temp = data;
+  // data = null;
+  return temp;
+}
+
+Please uncomment data = null after you show them the Red Stage.
+
+
+Implement Linked List
+
+Test 9 - push() twice, pop() returns 2nd pushed value, then peek() returns 1st pushed value
+
+Test
+@Test
+public void peek_ReturnsFirstValue_IfPushTwice_PopOnce() {
+  stack.push(6);
+  stack.push(7);
+  assertEquals(7, stack.pop());
+  assertEquals(6, stack.peek());
+}
+COMMENT THE TEST OUT SO YOU SHOW THEM THAT YOU SHOULD HAVE ALL TESTS PASSING WHEN YOU REFACTOR
+
+Test 9 - Implement Linked List - TDD REFACTOR (Node Class + Head Variable)
+class Node {
+  Object data;
+  Node next;
+}
+
+Node head;
+
+Test 9 - Implement Linked List - TDD REFACTOR (isEmpty)
+public boolean isEmpty() {
+  return head == null;
+}
+
+Test 9 - Implement Linked List - TDD REFACTOR (push)
+public void push(Object data) {
+  Node newNode = new Node();
+  newNode.data = data;
+  newNode.next = head;
+  head = newNode;
+}
+
+Test 9 - Implement Linked List - TDD REFACTOR (peek)
+public Object peek() {
+  if(isEmpty()){
+    return null;
+  }
+  return head.data;
+}
+
+Test 9 - Implement Linked List - TDD REFACTOR (pop)
+public Object pop() {
+  if(isEmpty()){
+    throw new EmptyStackException();
+  }
+  Object temp = head.data;
+  head = head.next;
+  return temp;
+}
+UNCOMMENT OUT THE TEST AND MAKE SURE IT PASSES
+
+
+contains
+
+Test 10 - contains(value) returns true if value is present
+
+Test
+@Test
+public void contains_ReturnsTrue_IfValueIsPresent() {
+  stack.push(8);
+  stack.push(9);
+  stack.push(10);
+  assertTrue(stack.contains(8));
+  assertTrue(stack.contains(9));
+  assertTrue(stack.contains(10));
+}
+
+TDD Red
+public boolean contains(Object data) {
+  return false;
+}
+
+TDD Green
+public boolean contains(Object data) {
+  return true;
+}
+
+
+Test 11 - contains(value) returns false if value is not present
+
+Test
+@Test
+public void contains_ReturnsFalse_IfValueIsNotPresent() {
+  stack.push(10);
+  stack.push(11);
+  stack.push(12);
+  assertFalse(stack.contains(13));
+}
+
+TDD Red
+public boolean contains(Object data) {
+  return true;
+}
+
+TDD Green
+public boolean contains(Object data) {
+Node nodeToIterate = head;
+
+while(nodeToIterate != null) {
+  if(nodeToIterate.data.equals(data)) {
+    return true;
+  }
+  nodeToIterate = nodeToIterate.next;
+}
+return false;
+}
+
+MAIN INTERVIEW IS DONE! Bonus questions ahead!
+
+
+BONUS 1 - size - Size Returns Number of Elements in Stack (Tracked By Variable) - TDD Test
+@Test
+public void size_ReturnsValueOfElementsInStack_TrackedByVariable() {
+  stack.push(12);
+  stack.push(13);
+  stack.push(14);
+  assertEquals(3, stack.size());
+}
+
+BONUS 1 - size - Size Returns Number of Elements in Stack (Tracked By Variable) - TDD RED
+public int size() {
+  return 0;
+}
+
+BONUS 1 - size - Size Returns Number of Elements in Stack (Tracked By Variable) - TDD GREEN
+int counter;
+
+public void push(Object data) {
+  Node newNode = new Node();
+  newNode.data = data;
+  newNode.next = head;
+  head = newNode;
+  counter++;
+}
+
+public Object pop() {
+  if(isEmpty()){
+      throw new EmptyStackException();
+  }
+  Object temp = head.data;
+  head = head.next;
+  counter--;
+  return temp;
+
+}
+
+public int size() {
+  return counter;
+}
+
+
+Test BONUS 2 - peekN 1 - peekN Returns Value of Stack at Specific Index - TDD Test
+@Test
+public void peekN_ReturnsValueOfStack_GivenASpecificIndex() {
+  stack.push(15);
+  stack.push(16);
+  stack.push(17);
+  stack.push(18);
+  assertEquals(16, stack.peekN(2));
+}
+
+Test BONUS 2 - peekN 1 - peekN Returns Value of Stack at Specific Index - TDD RED
+public Object peekN(int value) {
+  return null;
+}
+
+Test BONUS 2 - peekN 1 - peekN Returns Value of Stack at Specific Index - TDD GREEN
+public Object peekN(int value) {
+  Node nodeToIterate = head;
+
+  while(value != 0) {
+    nodeToIterate = nodeToIterate.next;
+    value--;
+  }
+  return nodeToIterate.data;
+}
+
+
+Test BONUS 3 - peekN 2 - peekN Returns Null if No Value Exists at Specific Index - TDD Test
+@Test
+public void peekN_ReturnsNull_IfNoValueExistsAtSpecificIndex() {
+  stack.push(19);
+  stack.push(20);
+  assertNull(stack.peekN(3));
+}
+
+Test BONUS 3 - peekN 2 - peekN Returns Null if No Value Exists at Specific Index - TDD GREEN
+public Object peekN(int value) {
+  if(counter <= value) {
+    return null;
+  }
+  Node nodeToIterate = head;
+
+  while(value != 0) {
+    nodeToIterate = nodeToIterate.next;
+    value--;
+  }
+  return nodeToIterate.data;
+}
+
+
+Test BONUS 4 - peekN 3 - peekN with Negative Index throws IllegalArgumentException - TDD Test
+@Test(expected = IllegalArgumentException.class)
+public void peekN_ThrowsIllegalArgumentException_GivenNegativeIndex() {
+  stack.peekN(-1);
+}
+
+Test BONUS 4 - peekN 3 - peekN with Negative Index throws IllegalArgumentException - TDD GREEN
+public Object peekN(int value) {
+  if(value < 0) {
+    throw new IllegalArgumentException();
+  }
+
+  if(counter <= value) {
+    return null;
+  }
+  Node nodeToIterate = head;
+
+  while(value != 0) {
+    nodeToIterate = nodeToIterate.next;
+    value--;
+  }
+  return nodeToIterate.data;
+}
